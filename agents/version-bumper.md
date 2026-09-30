@@ -2,10 +2,7 @@
 name: version-bumper
 description: Take changelog summary and determine new semantic version, then update version files
 model: sonnet
-tools:
-  - Read
-  - Edit
-  - Bash
+tools: Read, Edit, Bash
 ---
 
 Update the project's version files based on changelog analysis.

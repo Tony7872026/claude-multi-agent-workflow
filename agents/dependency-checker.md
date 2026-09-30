@@ -2,9 +2,7 @@
 name: dependency-checker
 description: Scan dependencies for outdated packages, vulnerabilities, or breaking changes that affect versioning
 model: haiku
-tools:
-  - Read
-  - Grep
+tools: Read, Grep
 ---
 
 Analyze project dependencies for impacts on release versioning.
