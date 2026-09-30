@@ -2,10 +2,14 @@
 
 ## What the plugin does
 
-The release plugin automates the release management workflow. It orchestrates two specialized agents to:
+The release plugin automates the release management workflow. It orchestrates three specialized agents across two phases:
 
+**Phase 1 (Parallel):**
 1. **Analyze changes** — Scan git history and code to extract what's new, fixed, or breaking since the last release
-2. **Bump version** — Determine the appropriate semantic version bump (patch/minor/major) and update version files
+2. **Check dependencies** — Scan dependencies for outdated packages, vulnerabilities, or breaking changes
+
+**Phase 2 (Sequential):**
+3. **Bump version** — Determine the appropriate semantic version bump (patch/minor/major) based on both code changes and dependency updates
 
 The plugin also includes pre-release validation checks and a skill for formatting release notes into publication-ready markdown.
 
@@ -36,19 +40,25 @@ If the changelog contained ambiguous or conflicting changes requiring judgment c
 
 ---
 
-## Orchestration Decision: Sequential Steps (Analyze → Bump)
+## Orchestration Decision: Parallel Analysis → Sequential Bump
 
-**Why changelog-analyzer and version-bumper run sequentially, not in parallel:**
+**Why Phase 1 runs changelog-analyzer and dependency-checker in parallel:**
 
-The version-bumper fundamentally depends on the changelog-analyzer's output. It receives the categorized changes (Features/Fixes/Breaking) and uses that summary to decide whether to bump patch, minor, or major version.
+These two agents perform independent read-only analysis tasks:
+- changelog-analyzer examines git commit history
+- dependency-checker examines package.json and dependency metadata
 
-Running them in parallel would be wasteful:
-- The version-bumper would have no input and would have to redundantly re-examine git history
-- It would require passing results between agents anyway, making parallelism illusory
+Neither task depends on the other's output. Running them in parallel saves time — both analyses happen concurrently rather than sequentially.
 
-The workflow *could* have added a parallel step if, for example, it also fetched external release notes, documentation updates, or changelog templates in parallel with change analysis. But with the current scope, sequential execution is correct.
+**Why Phase 2 (version-bumper) runs sequentially after Phase 1:**
 
-The dependency is explicit and unavoidable: **analyze first, then decide and update based on what you learned.**
+The version-bumper depends on both Phase 1 results. It needs:
+- The changelog summary (what changed in code)
+- The dependency analysis (what's outdated or has breaking changes)
+
+It uses both inputs to make an informed versioning decision (patch/minor/major). Running version-bumper before Phase 1 completes would be pointless — it would have no input to work with.
+
+The parallelism is explicit: **analyze independently in parallel, then synthesize both results into a version decision.**
 
 ---
 
