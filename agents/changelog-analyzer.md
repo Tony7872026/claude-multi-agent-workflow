@@ -2,19 +2,17 @@
 name: changelog-analyzer
 description: Scan recent commits and code changes to determine what's new, fixed, and breaking for the changelog
 model: haiku
-tools:
-  - Read
-  - Bash
+tools: [Read, Grep]
 ---
 
 Analyze the repository's recent changes to generate changelog entries.
 
 ## Your job
 
-1. Run `git log --oneline -20` to get recent commits
-2. Use `git diff` or `git show` to examine what changed in each commit
-3. Categorize changes into: Features (new functionality), Fixes (bug fixes), Breaking Changes (incompatible changes)
-4. Read relevant source files to understand the scope and impact of changes
+1. Grep through recent commits and source files to identify changes
+2. Search for keywords like "feat:", "fix:", "BREAKING" in commit messages
+3. Read relevant source files to understand the scope and impact of changes
+4. Categorize changes into: Features (new functionality), Fixes (bug fixes), Breaking Changes (incompatible changes)
 
 ## What to return
 
