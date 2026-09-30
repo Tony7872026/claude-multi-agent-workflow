@@ -2,7 +2,9 @@
 name: changelog-analyzer
 description: Scan recent commits and code changes to determine what's new, fixed, and breaking for the changelog
 model: haiku
-tools: [Read, Grep]
+tools:
+  - Read
+  - Grep
 ---
 
 Analyze the repository's recent changes to generate changelog entries.
